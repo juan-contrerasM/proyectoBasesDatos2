@@ -56,11 +56,17 @@ app.post('/api/registro', async (req, res) => {
 app.post('/api/login', async (req, res) => {
   const { correo, clave } = req.body;
   let connection;
+  console.log(correo, clave);
 
   try {
     connection = await oracledb.getConnection(dbConfig);
     const result = await connection.execute(`
-      SELECT num_identificacion, primer_nombre, tipo_usuario
+        SELECT 
+        usuario.num_identificacion, usuario.primer_nombre,
+        CASE
+            WHEN profesor.num_identificacion IS NOT NULL THEN 'PROFESOR'
+            ELSE 'ALUMNO'
+        END AS tipo_usuario
       FROM usuario
       LEFT JOIN profesor ON usuario.num_identificacion = profesor.num_identificacion
       LEFT JOIN alumno ON usuario.num_identificacion = alumno.num_identificacion
