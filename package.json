@@ -1,5 +1,6 @@
 {
   "scripts": {
-    "start-backend": "node backend/server.js"
+    "start-backend": "node backend/server.js",
+     "start": "concurrently \"cd backend && node server.js\" \"cd frontend && ng serve\""
   }
 }
