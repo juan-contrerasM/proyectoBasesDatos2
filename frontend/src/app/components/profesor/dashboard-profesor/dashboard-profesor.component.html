@@ -1,0 +1,9 @@
+
+<app-nav-bar [tipoUsuario]="'PROFESOR'"></app-nav-bar>
+<div class="container mt-5 pt-5"> <!-- contenido del dashboard --> </div>
+<h2>Bienvenido Profesor</h2>
+<div class="acciones">
+  <button *ngFor="let accion of acciones" (click)="navigate(accion.ruta)">
+    {{ accion.nombre }}
+  </button>
+</div>

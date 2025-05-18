@@ -7,7 +7,7 @@ import { provideRouter } from '@angular/router';
 
 bootstrapApplication(AppComponent, {
     providers: [
-    provideHttpClient(), // ✅ Esto reemplaza a HttpClientModule
+    provideHttpClient(),
     provideRouter(routes)
   ]
 });

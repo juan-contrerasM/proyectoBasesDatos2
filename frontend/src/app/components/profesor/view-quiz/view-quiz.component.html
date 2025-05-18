@@ -1,0 +1,14 @@
+<app-nav-bar [tipoUsuario]="'PROFESOR'"></app-nav-bar>
+<div class="container mt-4">
+  <h2 class="mb-4 text-center">Lista de Quizzes</h2>
+  <div class="row">
+    <div class="col-md-6 mb-4" *ngFor="let q of quizzes">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ q.NOMBRE }}</h5>
+          <p class="card-text"><strong>Descripción:</strong> {{ q.DESCRIPCION }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

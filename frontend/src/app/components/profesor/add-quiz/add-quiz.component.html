@@ -1,0 +1,41 @@
+<app-nav-bar [tipoUsuario]="'PROFESOR'"></app-nav-bar>
+<div class="container mt-4">
+  <h2 class="mb-4 text-center">Crear Quiz</h2>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Nombre:</label>
+        <input formControlName="nombre" class="form-control" />
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Descripción:</label>
+        <input formControlName="descripcion" class="form-control" />
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">ID Curso:</label>
+        <input type="number" formControlName="curso_id" class="form-control" />
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">ID Profesor:</label>
+        <input formControlName="profesor_id" class="form-control" />
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">ID Configuración:</label>
+        <input type="number" formControlName="config_id" class="form-control" />
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">ID Categoría:</label>
+        <input type="number" formControlName="categoria_id" class="form-control" />
+      </div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary mt-3">Crear Quiz</button>
+      </div>
+    </div>
+  </form>
+</div>

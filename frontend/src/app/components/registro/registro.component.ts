@@ -4,6 +4,8 @@ import { ReactiveFormsModule, Validators, FormBuilder, FormGroup, FormsModule } 
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ModalComponent } from '../../shared/modal/modal.component';
+import { SessionService } from '../../services/session-manage.service';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-registro',
@@ -21,7 +23,12 @@ export class RegistroComponent {
   public registroForm: FormGroup;
 
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
+  constructor(private fb: FormBuilder, 
+    private auth: AuthService, 
+    private router: Router, 
+    private session: SessionService, 
+    private alertService: AlertService
+  ) {
     this.registroForm = this.fb.group({
       num_identificacion: ['', Validators.required],
       primer_nombre: ['', Validators.required],
@@ -47,6 +54,8 @@ export class RegistroComponent {
         this.abrirModal();
       }
     });
+
+    this.redirect();
   }
 
   onSubmit() {
@@ -84,5 +93,21 @@ export class RegistroComponent {
     }
 
     this.cerrarModal();
+  }
+
+
+  navigate(ruta: string) {
+    this.router.navigate([ruta]);
+  }
+
+  ngOnInit() {
+    
+  }
+
+  redirect() {
+    if (this.session.getUsuario() !== null) {
+      this.router.navigate(['../']);
+      this.alertService.alert('warning', 'Primero debe cerrar sesión.', false);
+    }
   }
 }

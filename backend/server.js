@@ -89,3 +89,120 @@ app.post('/api/login', async (req, res) => {
 app.listen(3000, () => {
   console.log('Servidor backend corriendo en http://localhost:3000');
 });
+
+
+// CREAR PREGUNTA
+
+app.post('/api/pregunta', async (req, res) => {
+  const body = req.body;
+  let connection;
+
+  try {
+    connection = await oracledb.getConnection(dbConfig);
+    await connection.execute(`
+      BEGIN
+        crear_pregunta(
+          :porcentaje,
+          :numero_respuestas,
+          :tiempo_respuesta,
+          :respuesta,
+          :requiereRevision,
+          :esPublica,
+          :contenido,
+          :justificacion,
+          :estado,
+          :tema_id_tema,
+          :tipo_dificultad_id_dificultad,
+          :tipo_pregunta_id_tipo_pregunta
+        );
+      END;
+    `, body);
+
+    res.status(200).json({ message: 'Pregunta creada' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al crear pregunta' });
+  } finally {
+    if (connection) await connection.close();
+  }
+});
+
+// VER PREGUNTAS
+
+app.get('/api/preguntas', async (req, res) => {
+  let connection;
+
+  try {
+    connection = await oracledb.getConnection(dbConfig);
+    const result = await connection.execute(`SELECT * FROM pregunta`, [], {
+      outFormat: oracledb.OUT_FORMAT_OBJECT
+    });
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al obtener preguntas' });
+  } finally {
+    if (connection) await connection.close();
+  }
+});
+
+
+// CREAR QUIZ
+
+app.post('/api/quiz', async (req, res) => {
+  const {
+    nombre, descripcion, curso_id, profesor_id, config_id, categoria_id
+  } = req.body;
+
+  let connection;
+  try {
+    connection = await oracledb.getConnection(dbConfig);
+    await connection.execute(`
+      BEGIN
+        crear_quiz(
+          :nombre,
+          :descripcion,
+          :curso_id,
+          :profesor_id,
+          :config_id,
+          :categoria_id
+        );
+      END;
+    `, {
+      nombre, descripcion,
+      curso_id_curso: curso_id,
+      profesor_id,
+      config_id,
+      categoria_id
+    });
+
+    res.status(200).json({ message: 'Quiz creado' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al crear quiz' });
+  } finally {
+    if (connection) await connection.close();
+  }
+});
+
+
+// VER QUIZ
+
+app.get('/api/quizzes', async (req, res) => {
+  let connection;
+
+  try {
+    connection = await oracledb.getConnection(dbConfig);
+    const result = await connection.execute(`SELECT * FROM quiz`, [], {
+      outFormat: oracledb.OUT_FORMAT_OBJECT
+    });
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al obtener quizzes' });
+  } finally {
+    if (connection) await connection.close();
+  }
+});

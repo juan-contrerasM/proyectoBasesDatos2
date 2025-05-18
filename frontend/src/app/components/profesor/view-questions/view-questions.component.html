@@ -1,0 +1,17 @@
+<app-nav-bar [tipoUsuario]="'PROFESOR'"></app-nav-bar>
+
+<div class="container mt-4">
+  <h2 class="mb-4 text-center">Preguntas Registradas</h2>
+
+  <div class="row">
+    <div class="col-md-6 mb-4" *ngFor="let p of preguntas">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ p.CONTENIDO }}</h5>
+          <p class="card-text"><strong>Justificación:</strong> {{ p.JUSTIFICACION }}</p>
+          <p class="card-text"><strong>Respuesta:</strong> {{ p.RESPUESTA }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

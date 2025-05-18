@@ -1,0 +1,76 @@
+<app-nav-bar [tipoUsuario]="'PROFESOR'"></app-nav-bar>
+
+<div class="container mt-4">
+  <h2 class="mb-4 text-center">Agregar Pregunta</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <!-- Columna izquierda -->
+      <div class="col-md-6">
+        <div class="mb-3">
+          <label class="form-label">Contenido:</label>
+          <textarea class="form-control" rows="3" formControlName="contenido"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Justificación:</label>
+          <textarea class="form-control" rows="2" formControlName="justificacion"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Respuesta correcta:</label>
+          <input type="text" class="form-control" formControlName="respuesta" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Porcentaje:</label>
+          <input type="number" class="form-control" formControlName="porcentaje" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Número de respuestas:</label>
+          <input type="number" class="form-control" formControlName="numero_respuestas" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Tiempo de respuesta (segundos):</label>
+          <input type="number" class="form-control" formControlName="tiempo_respuesta" />
+        </div>
+      </div>
+
+      <!-- Columna derecha -->
+      <div class="col-md-6">
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" formControlName="requiereRevision" id="revisionCheck" />
+          <label class="form-check-label" for="revisionCheck">¿Requiere revisión?</label>
+        </div>
+
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" formControlName="esPublica" id="publicaCheck" />
+          <label class="form-check-label" for="publicaCheck">¿Es pública?</label>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">ID Tema:</label>
+          <input type="number" class="form-control" formControlName="tema_id_tema" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">ID Dificultad:</label>
+          <input type="number" class="form-control" formControlName="tipo_dificultad_id_dificultad" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">ID Tipo de Pregunta:</label>
+          <input type="number" class="form-control" formControlName="tipo_pregunta_id_tipo_pregunta" />
+        </div>
+
+
+        <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary mt-3">Crear pregunta</button>
+      </div>
+      </div>
+
+    </div>
+  </form>
+</div>
