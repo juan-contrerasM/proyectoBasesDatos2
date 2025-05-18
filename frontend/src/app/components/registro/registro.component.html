@@ -86,3 +86,47 @@
     </div>
   </div>
 </div>
+
+<app-modal [visible]="mostrarModal" [title]="'Datos adicionales'" (close)="cerrarModal()"
+  (accept)="guardarDatosProfesor(registroForm.get('tipo_usuario')?.value === 'PROFESOR')">
+
+  <!-- Aquí va el contenido del modal -->
+  <div *ngIf="registroForm.get('tipo_usuario')?.value === 'PROFESOR'">
+    <!-- Campos para profesor -->
+    <label for="nivel">Nivel de Estudios</label>
+    <select class="form-select" [(ngModel)]="nivelEstudios" id="nivel">
+      <option>POSTGRADO</option>
+      <option>PREGRADO</option>
+      <option>MAESTRÍA</option>
+      <option>DOCTORADO</option>
+    </select>
+
+    <label for="contrato">Tipo de Contrato</label>
+    <select class="form-select" [(ngModel)]="tipoContrato" id="contrato">
+      <option>CATEDRATICO</option>
+      <option>PLANTA</option>
+    </select>
+  </div>
+
+  <div *ngIf="registroForm.get('tipo_usuario')?.value === 'ALUMNO'">
+    <!-- Campo para alumno -->
+    <label for="programa">Programa Academico</label>
+    <select class="form-select" [(ngModel)]="programaAcademico" id="programa">
+      <option value="">Seleccione un programa</option>
+      <option value="SISTEMAS">SISTEMAS</option>
+      <option value="ELECTRÓNICA">ELECTRÓNICA</option>
+      <option value="MECÁNICA">MECÁNICA</option>
+      <option value="ADMINISTRACIÓN">ADMINISTRACIÓN</option>
+      <option value="CONTADURÍA">CONTADURÍA</option>
+      <option value="ENFERMERÍA">ENFERMERÍA</option>
+      <option value="DERECHO">DERECHO</option>
+      <option value="INGENIERÍA CIVIL">INGENIERÍA CIVIL</option>
+      <option value="ARQUITECTURA">ARQUITECTURA</option>
+      <option value="PEDAGOGÍA">PEDAGOGÍA</option>
+      <option value="PSICOLOGÍA">PSICOLOGÍA</option>
+      <option value="AGRONOMÍA">AGRONOMÍA</option>
+      <option value="BIOLOGÍA">BIOLOGÍA</option>
+    </select>
+  </div>
+
+</app-modal>

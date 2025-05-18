@@ -1,7 +1,7 @@
 // backend/server.js
 const express = require('express');
 const oracledb = require('oracledb');
-oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_23_8' });
+oracledb.initOracleClient({ libDir: 'C:\\oraclexe\\instantclient_23_8' });
 const cors = require('cors');
 
 const app = express();
@@ -12,7 +12,7 @@ app.use(express.json());
 
 // Configuración de Oracle
 const dbConfig = {
-  user: 'bd2admin',
+  user: 'db2admin',
   password: 'admin',
   connectionString: 'localhost:1521/xe' 
 };
@@ -22,7 +22,7 @@ app.post('/api/registro', async (req, res) => {
   const {
     num_identificacion, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido,
     fecha_nacimiento, genero, departamento, direccion, fecha_ingreso,
-    correo, clave, tipo_usuario
+    correo, clave, tipo_usuario, tipo_contrato, nivel_estudios, programa_academico
   } = req.body;
 
   let connection;
@@ -34,13 +34,13 @@ app.post('/api/registro', async (req, res) => {
         crear_usuario(
           :num_identificacion, :primer_nombre, :segundo_nombre, :primer_apellido, :segundo_apellido,
           TO_DATE(:fecha_nacimiento, 'YYYY-MM-DD'), :genero, :departamento, :direccion,
-          TO_DATE(:fecha_ingreso, 'YYYY-MM-DD'), :correo, :clave, :tipo_usuario
+          TO_DATE(:fecha_ingreso, 'YYYY-MM-DD'), :correo, :clave, :tipo_usuario, :tipo_contrato, :nivel_estudios, :programa_academico
         );
       END;
     `, {
       num_identificacion, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido,
       fecha_nacimiento, genero, departamento, direccion, fecha_ingreso,
-      correo, clave, tipo_usuario
+      correo, clave, tipo_usuario, tipo_contrato, nivel_estudios, programa_academico
     });
 
     res.status(200).json({ message: 'Usuario registrado exitosamente.' });
