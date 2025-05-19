@@ -1,41 +1,124 @@
 <app-nav-bar [tipoUsuario]="'PROFESOR'"></app-nav-bar>
 <div class="container mt-4">
-  <h2 class="mb-4 text-center">Crear Quiz</h2>
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="row g-3">
-      <div class="col-md-6">
-        <label class="form-label">Nombre:</label>
-        <input formControlName="nombre" class="form-control" />
-      </div>
+  <h2>Crear Nuevo Quiz</h2>
 
-      <div class="col-md-6">
-        <label class="form-label">Descripción:</label>
-        <input formControlName="descripcion" class="form-control" />
-      </div>
+  <!-- Stepper visual -->
+  <ul class="nav nav-pills mb-3">
+    <li class="nav-item">
+      <span class="nav-link" [class.active]="step === 1">1. Datos Generales</span>
+    </li>
+    <li class="nav-item">
+      <span class="nav-link" [class.active]="step === 2">2. Configuración</span>
+    </li>
+    <li class="nav-item">
+      <span class="nav-link" [class.active]="step === 3">3. Preguntas</span>
+    </li>
+  </ul>
 
-      <div class="col-md-6">
-        <label class="form-label">ID Curso:</label>
-        <input type="number" formControlName="curso_id" class="form-control" />
-      </div>
+  <!-- Paso 1: Datos Generales -->
+  <form *ngIf="step === 1" [formGroup]="quizForm" (ngSubmit)="avanzar()">
+    <div class="form-group">
+      <label>Nombre del Quiz</label>
+      <input class="form-control" formControlName="nombre" />
+    </div>
 
-      <div class="col-md-6">
-        <label class="form-label">ID Profesor:</label>
-        <input formControlName="profesor_id" class="form-control" />
-      </div>
+    <div class="form-group">
+      <label>Descripción</label>
+      <input class="form-control" formControlName="descripcion" />
+    </div>
 
-      <div class="col-md-6">
-        <label class="form-label">ID Configuración:</label>
-        <input type="number" formControlName="config_id" class="form-control" />
-      </div>
+    <div class="form-group">
+      <label>Curso</label>
+      <select class="form-control" formControlName="curso_id">
+        <option *ngFor="let curso of cursos" [value]="curso.ID_CURSO">{{ curso.CONTENIDO }}</option>
+      </select>
+    </div>
 
-      <div class="col-md-6">
-        <label class="form-label">ID Categoría:</label>
-        <input type="number" formControlName="categoria_id" class="form-control" />
-      </div>
+    <div class="form-group">
+      <label>Categoría</label>
+      <select class="form-control" formControlName="categoria_id">
+        <option *ngFor="let cat of categorias" [value]="cat.ID_CATEGORIA">{{ cat.NOMBRE }}</option>
+      </select>
+    </div>
 
-      <div class="col-12 text-end">
-        <button type="submit" class="btn btn-primary mt-3">Crear Quiz</button>
+    <button class="btn btn-primary mt-3" type="submit">Siguiente</button>
+  </form>
+
+  <!-- Paso 2: Configuración -->
+  <form *ngIf="step === 2" [formGroup]="configForm" (ngSubmit)="avanzar()">
+    <div class="form-group">
+      <label>Peso en el curso</label>
+      <input type="number" class="form-control" formControlName="peso" />
+    </div>
+
+    <div class="form-group">
+      <label>Umbral de aprobación (%)</label>
+      <input type="number" class="form-control" formControlName="umbral" />
+    </div>
+
+    <div class="form-group">
+      <label>Fecha y hora de presentación</label>
+      <input type="datetime-local" class="form-control" formControlName="fecha_realizacion" />
+    </div>
+
+    <div class="form-group">
+      <label>Número de preguntas a mostrar</label>
+      <input type="number" class="form-control" formControlName="numCanAutomaticas" />
+    </div>
+
+    <div class="form-group">
+      <label>¿Preguntas aleatorias del banco?</label>
+      <input type="checkbox" formControlName="seleccion_Automatica" />
+    </div>
+
+    <div class="form-group">
+      <label>¿Tiene tiempo límite?</label>
+      <input type="checkbox" formControlName="tiempo_limite" />
+    </div>
+
+    <div class="form-group" *ngIf="configForm.value.tiempo_limite">
+      <label>Duración en minutos</label>
+      <input type="number" class="form-control" formControlName="tiempo_minutos" />
+    </div>
+
+    <div class="form-group">
+      <label>Retroalimentación (opcional)</label>
+      <textarea class="form-control" formControlName="retroalimentacion"></textarea>
+    </div>
+
+    <div class="d-flex justify-content-between mt-3">
+      <button class="btn btn-secondary" type="button" (click)="retroceder()">Atrás</button>
+      <button class="btn btn-primary" type="submit">Siguiente</button>
+    </div>
+  </form>
+
+  <!-- Paso 3: Selección de Preguntas -->
+  <form *ngIf="step === 3" [formGroup]="preguntaForm" (ngSubmit)="submit()">
+    <div class="form-group">
+      <label>Tema</label>
+      <select class="form-control" formControlName="tema_id" (change)="cargarBancos()">
+        <option *ngFor="let tema of temas" [value]="tema.ID_TEMA">{{ tema.NOMBRE }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Banco de Preguntas</label>
+      <select class="form-control" formControlName="banco_id" (change)="cargarPreguntas()">
+        <option *ngFor="let banco of bancos" [value]="banco.ID_BANCO_PREGUNTAS">{{ banco.ID_BANCO_PREGUNTAS }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Seleccionar preguntas</label>
+      <div *ngFor="let p of preguntas">
+        <input type="checkbox" [value]="p.ID_PREGUNTA" (change)="onCheckPregunta(p.ID_PREGUNTA, $event)" />
+        {{ p.CONTENIDO | slice:0:100 }}...
       </div>
+    </div>
+
+    <div class="d-flex justify-content-between mt-3">
+      <button class="btn btn-secondary" type="button" (click)="retroceder()">Atrás</button>
+      <button class="btn btn-success" type="submit">Crear Quiz</button>
     </div>
   </form>
 </div>

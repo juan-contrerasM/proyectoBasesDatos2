@@ -291,3 +291,46 @@ app.get('/api/temas', async (req, res) => {
   }
 
 });
+
+
+app.get('/api/categorias', async (req, res) => {
+  let connection;
+
+  try {
+    connection = await oracledb.getConnection(dbConfig);
+    const result = await connection.execute(`SELECT * FROM CATEGORIA`, {}, {
+      outFormat: oracledb.OUT_FORMAT_OBJECT
+    });
+
+    res.json(result.rows);
+    console.log(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al obtener las categorias.' });
+  } finally {
+    if (connection) await connection.close();
+  }
+
+});
+
+app.get('/api/cursos', async (req, res) => {
+  const profesorId = req.query.profesor;
+  let connection;
+
+  try {
+    connection = await oracledb.getConnection(dbConfig);
+
+    const result = await connection.execute(
+      `SELECT * FROM CURSO WHERE profesor_num_identificacion = :profesor_id`,
+      { profesor_id: profesorId },
+      { outFormat: oracledb.OUT_FORMAT_OBJECT }
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error al obtener los cursos del profesor:', err);
+    res.status(500).json({ error: 'Error al obtener los cursos.' });
+  } finally {
+    if (connection) await connection.close();
+  }
+});

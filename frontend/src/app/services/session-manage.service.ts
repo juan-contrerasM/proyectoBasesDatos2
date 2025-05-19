@@ -26,4 +26,8 @@ export class SessionService {
         return this.usuario?.PRIMER_NOMBRE || '';
     }
 
+    getId(): string {
+        return this.usuario?.NUM_IDENTIFICACION || '';
+    }
+
 }
