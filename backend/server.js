@@ -134,18 +134,43 @@ app.get('/api/preguntas', async (req, res) => {
 
   try {
     connection = await oracledb.getConnection(dbConfig);
-    const result = await connection.execute(`SELECT * FROM pregunta`, [], {
-      outFormat: oracledb.OUT_FORMAT_OBJECT
-    });
+
+    const result = await connection.execute(
+      `SELECT 
+         p.ID_PREGUNTA,
+         TO_CHAR(p.CONTENIDO) AS CONTENIDO,
+         TO_CHAR(p.JUSTIFICACION) AS JUSTIFICACION,
+         p.PORCENTAJE,
+         p.NUMERO_RESPUESTAS,
+         p.TIEMPO_RESPUESTA,
+         p.RESPUESTA,
+         p.REQUIEREREVISION,
+         p.ESPUBLICA,
+         d.NOMBRE AS DIFICULTAD,
+         t.NOMBRE AS TEMA,
+         tp.NOMBRE AS TIPO_PREGUNTA
+       FROM 
+         PREGUNTA p
+       LEFT JOIN TIPO_DIFICULTAD d ON p.TIPO_DIFICULTAD_ID_DIFICULTAD = d.ID_DIFICULTAD
+       LEFT JOIN TEMA t ON p.TEMA_ID_TEMA = t.ID_TEMA
+       LEFT JOIN TIPO_PREGUNTA tp ON p.TIPO_PREGUNTA_ID_TIPO_PREGUNTA = tp.ID_TIPO_PREGUNTA
+       WHERE 
+         p.ESTADO = 1
+       ORDER BY 
+         p.ID_PREGUNTA`,
+      {},
+      { outFormat: oracledb.OUT_FORMAT_OBJECT }
+    );
 
     res.json(result.rows);
   } catch (err) {
-    console.error(err);
+    console.error('Error al obtener preguntas:', err);
     res.status(500).json({ error: 'Error al obtener preguntas' });
   } finally {
     if (connection) await connection.close();
   }
 });
+
 
 
 // CREAR QUIZ
@@ -205,4 +230,64 @@ app.get('/api/quizzes', async (req, res) => {
   } finally {
     if (connection) await connection.close();
   }
+});
+
+app.get('/api/dificultad', async (req, res) => {
+  let connection;
+
+  try {
+    connection = await oracledb.getConnection(dbConfig);
+    const result = await connection.execute(`SELECT * FROM tipo_dificultad`, {}, {
+      outFormat: oracledb.OUT_FORMAT_OBJECT
+    });
+
+    res.json(result.rows);
+    console.log(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al obtener los registros de dificultad' });
+  } finally {
+    if (connection) await connection.close();
+  }
+
+});
+
+app.get('/api/tipospregunta', async (req, res) => {
+  let connection;
+
+  try {
+    connection = await oracledb.getConnection(dbConfig);
+    const result = await connection.execute(`SELECT * FROM tipo_pregunta`, {}, {
+      outFormat: oracledb.OUT_FORMAT_OBJECT
+    });
+
+    res.json(result.rows);
+    console.log(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al obtener los tipos de pregunta' });
+  } finally {
+    if (connection) await connection.close();
+  }
+
+});
+
+app.get('/api/temas', async (req, res) => {
+  let connection;
+
+  try {
+    connection = await oracledb.getConnection(dbConfig);
+    const result = await connection.execute(`SELECT * FROM TEMA`, {}, {
+      outFormat: oracledb.OUT_FORMAT_OBJECT
+    });
+
+    res.json(result.rows);
+    console.log(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al obtener los temas' });
+  } finally {
+    if (connection) await connection.close();
+  }
+
 });
