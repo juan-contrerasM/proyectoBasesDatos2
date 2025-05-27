@@ -7,6 +7,8 @@ import { AddQuestionComponent } from './components/profesor/add-question/add-que
 import { ViewQuestionsComponent } from './components/profesor/view-questions/view-questions.component';
 import { AddQuizComponent } from './components/profesor/add-quiz/add-quiz.component';
 import { ViewQuizComponent } from './components/profesor/view-quiz/view-quiz.component';
+import { RegistrarRespuestaComponent } from './components/registrar-respuesta/registrar-respuesta.component';
+import { BancoPreguntaComponent } from './components/profesor/banco-pregunta/banco-pregunta.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -18,6 +20,9 @@ export const routes: Routes = [
   { path: 'view-questions', component: ViewQuestionsComponent},
   { path: 'add-quiz', component: AddQuizComponent},
   { path: 'view-quiz', component: ViewQuizComponent},
-  { path: "**", pathMatch: "full", redirectTo: "login" }
+  { path: 'registrar-respuesta', component: RegistrarRespuestaComponent},
+  { path: "banco-pregunta", component: BancoPreguntaComponent },
+  { path: "**", pathMatch: "full", redirectTo: "login" },
+  
 
 ];

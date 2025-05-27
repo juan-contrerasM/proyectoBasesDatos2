@@ -1,7 +1,7 @@
 // backend/server.js
 const express = require('express');
 const oracledb = require('oracledb');
-oracledb.initOracleClient({ libDir: 'C:\\oraclexe\\instantclient_23_8' });
+oracledb.initOracleClient({ libDir: 'C:\\oracle\\instantclient_23_8' });
 const cors = require('cors');
 
 const app = express();
@@ -92,20 +92,22 @@ app.listen(3000, () => {
 
 
 // CREAR PREGUNTA
-
 app.post('/api/pregunta', async (req, res) => {
-  const body = req.body;
   let connection;
 
   try {
+    const { pregunta, respuestas } = req.body;
+
     connection = await oracledb.getConnection(dbConfig);
-    await connection.execute(`
+
+    // 1. Crear la pregunta y obtener el ID generado
+    const result = await connection.execute(
+      `
       BEGIN
-        crear_pregunta(
+        CREAR_PREGUNTA(
           :porcentaje,
           :numero_respuestas,
           :tiempo_respuesta,
-          :respuesta,
           :requiereRevision,
           :esPublica,
           :contenido,
@@ -113,19 +115,65 @@ app.post('/api/pregunta', async (req, res) => {
           :estado,
           :tema_id_tema,
           :tipo_dificultad_id_dificultad,
-          :tipo_pregunta_id_tipo_pregunta
+          :tipo_pregunta_id_tipo_pregunta,
+          :p_id_generado
         );
       END;
-    `, body);
+      `,
+      {
+        porcentaje: pregunta.porcentaje,
+        numero_respuestas: pregunta.numero_respuestas,
+        tiempo_respuesta: pregunta.tiempo_respuesta,
+        requiereRevision: pregunta.requiereRevision,
+        esPublica: pregunta.esPublica,
+        contenido: pregunta.contenido,
+        justificacion: pregunta.justificacion,
+        estado: pregunta.estado,
+        tema_id_tema: pregunta.tema_id_tema,
+        tipo_dificultad_id_dificultad: pregunta.tipo_dificultad_id_dificultad,
+        tipo_pregunta_id_tipo_pregunta: pregunta.tipo_pregunta_id_tipo_pregunta,
+        p_id_generado: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER }
+      },
+      { autoCommit: true }
+    );
 
-    res.status(200).json({ message: 'Pregunta creada' });
+    const idPregunta = result.outBinds.p_id_generado;
+
+    console.log(respuestas + 'kkkkkkk');
+
+    // 2. Insertar respuestas asociadas a esa pregunta
+    for (const r of respuestas) {
+      console.log(r);
+      await connection.execute(
+        `
+        BEGIN
+          INSERTAR_RESPUESTA(
+            :id_pregunta,
+            :contenido,
+            :es_correcta
+          );
+        END;
+        `,
+        {
+          id_pregunta: idPregunta,
+          contenido: r.contenido,
+          es_correcta: r.es_correcta
+        },
+        { autoCommit: true }
+      );
+    }
+
+    res.status(201).json({ message: 'Pregunta y respuestas registradas correctamente' });
+
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al crear pregunta' });
+    console.error('Error al registrar pregunta/respuestas:', err);
+    res.status(500).json({ error: 'Error al registrar la pregunta y sus respuestas' });
   } finally {
     if (connection) await connection.close();
   }
 });
+
+
 
 // VER PREGUNTAS
 
@@ -143,17 +191,19 @@ app.get('/api/preguntas', async (req, res) => {
          p.PORCENTAJE,
          p.NUMERO_RESPUESTAS,
          p.TIEMPO_RESPUESTA,
-         p.RESPUESTA,
          p.REQUIEREREVISION,
          p.ESPUBLICA,
          d.NOMBRE AS DIFICULTAD,
          t.NOMBRE AS TEMA,
-         tp.NOMBRE AS TIPO_PREGUNTA
+         tp.NOMBRE AS TIPO_PREGUNTA,
+         r.texto AS RESPUESTA
+
        FROM 
          PREGUNTA p
        LEFT JOIN TIPO_DIFICULTAD d ON p.TIPO_DIFICULTAD_ID_DIFICULTAD = d.ID_DIFICULTAD
        LEFT JOIN TEMA t ON p.TEMA_ID_TEMA = t.ID_TEMA
        LEFT JOIN TIPO_PREGUNTA tp ON p.TIPO_PREGUNTA_ID_TIPO_PREGUNTA = tp.ID_TIPO_PREGUNTA
+       LEFT JOIN RESPUESTA r ON p.ID_PREGUNTA = r.id_pregunta
        WHERE 
          p.ESTADO = 1
        ORDER BY 
@@ -315,17 +365,18 @@ app.get('/api/categorias', async (req, res) => {
 
 app.get('/api/cursos', async (req, res) => {
   const profesorId = req.query.profesor;
+
   let connection;
 
   try {
     connection = await oracledb.getConnection(dbConfig);
+    console.log('Profesor ID:', profesorId);
 
     const result = await connection.execute(
       `SELECT * FROM CURSO WHERE profesor_num_identificacion = :profesor_id`,
       { profesor_id: profesorId },
       { outFormat: oracledb.OUT_FORMAT_OBJECT }
     );
-
     res.json(result.rows);
   } catch (err) {
     console.error('Error al obtener los cursos del profesor:', err);

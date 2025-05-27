@@ -20,6 +20,7 @@ export class DashboardProfesorComponent implements OnInit {
     { nombre: 'Ver Preguntas', ruta: '/view-questions' },
     { nombre: 'Crear Examen', ruta: '/add-quiz' },
     { nombre: 'Ver Exámenes', ruta: '/view-quiz' },
+    { nombre: 'Bancos de preguntas', ruta: '/banco-pregunta' },
   ];
 
   constructor(private session: SessionService, private router: Router) {

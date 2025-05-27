@@ -1,0 +1,56 @@
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Registrar Respuesta</h2>
+
+    <form [formGroup]="respuestaForm" (ngSubmit)="registrarTodo()">
+
+<!-- UNIFICADO SELECCIÓN ÚNICA (1) Y MÚLTIPLE (2) -->
+<div *ngIf="+pregunta.tipo_pregunta_id_tipo_pregunta === 1 || +pregunta.tipo_pregunta_id_tipo_pregunta === 2">
+  <div formArrayName="respuestas" class="mb-3" *ngFor="let respuesta of respuestas.controls; let i = index">
+    <div class="form-check d-flex align-items-center mb-2">
+      <input
+        type="checkbox"
+        class="form-check-input me-2"
+        [checked]="correctas.at(i).value"
+        (change)="toggleCorrecta(i)"
+        [attr.name]="pregunta.tipo_pregunta_id_tipo_pregunta === 1 ? 'radioGroup' : null"
+        [attr.type]="pregunta.tipo_pregunta_id_tipo_pregunta === 1 ? 'radio' : 'checkbox'"
+      />
+      <input class="form-control" [formControlName]="i" placeholder="Opción {{ i + 1 }}" />
+    </div>
+  </div>
+
+  <div class="mt-2">
+    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="agregarOpcion()">Agregar opción</button>
+    <button type="button" class="btn btn-outline-danger btn-sm ms-2" (click)="deseleccionar()">Deseleccionar todas</button>
+    <span class="ms-3">Seleccionadas: {{ cantidadSeleccionadas }}</span>
+  </div>
+</div>
+
+
+        <!-- VERDADERO / FALSO -->
+        <div *ngIf="+pregunta.tipo_pregunta_id_tipo_pregunta === 3">
+            <label class="form-label">Seleccione la respuesta correcta:</label>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" value="0" formControlName="correcta" />
+                <label class="form-check-label">Verdadero</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" value="1" formControlName="correcta" />
+                <label class="form-check-label">Falso</label>
+            </div>
+        </div>
+
+        <!-- ABIERTA -->
+        <div *ngIf="+pregunta.tipo_pregunta_id_tipo_pregunta === 4">
+            <div class="mb-3">
+                <label class="form-label">Respuesta Abierta:</label>
+                <textarea class="form-control" rows="3" formControlName="respuestaAbierta"></textarea>
+            </div>
+        </div>
+
+        <div class="text-end mt-3">
+            <button type="submit" class="btn btn-primary">Guardar Respuesta</button>
+        </div>
+
+    </form>
+</div>

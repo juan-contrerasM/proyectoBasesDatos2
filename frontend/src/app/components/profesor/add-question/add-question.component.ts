@@ -5,6 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import { NavBarComponent } from '../../../shared/nav-bar/nav-bar.component';
 import { ApiService } from '../../../services/api.service';
 import { AlertService } from '../../../services/alert.service';
+import { Router } from '@angular/router';
+import { PreguntaTempService } from '../../../services/pregunta-temp.service';
 
 @Component({
   selector: 'app-add-question',
@@ -16,6 +18,9 @@ import { AlertService } from '../../../services/alert.service';
 
 export class AddQuestionComponent implements OnInit {
 
+
+
+
   public form: FormGroup;
   public dificultades: any[] = [];
   public tiposPregunta: any[] = [];
@@ -23,14 +28,15 @@ export class AddQuestionComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
     private http: HttpClient,
-    private apiService: ApiService, 
-    private alertService: AlertService) {
+    private apiService: ApiService,
+    private alertService: AlertService,
+   private router: Router, 
+   private preguntaTempService: PreguntaTempService,) {
 
     this.form = this.fb.group({
       porcentaje: [0, Validators.required],
       numero_respuestas: [1, Validators.required],
       tiempo_respuesta: [30, Validators.required],
-      respuesta: ['', Validators.required],
       requiereRevision: [0],
       esPublica: [1],
       contenido: ['', Validators.required],
@@ -49,31 +55,33 @@ export class AddQuestionComponent implements OnInit {
   }
 
   onSubmit() {
-    this.http.post('http://localhost:3000/api/pregunta', this.form.value).subscribe({
+    this.preguntaTempService.guardarPregunta(this.form.value);
+     this.router.navigate(['/registrar-respuesta']);
+  /*  this.http.post('http://localhost:3000/api/pregunta', this.form.value).subscribe({
       next: () => alert('Pregunta creada'),
       error: () => alert('Error al crear pregunta')
-    });
+    });*/
   }
 
   getDificultades() {
-      this.apiService.get<any[]>('dificultad').subscribe({
+    this.apiService.get<any[]>('dificultad').subscribe({
       next: data => this.dificultades = data,
-      error: err => this.alertService.alert('error','Error al cargar dificultades', false)
+      error: err => this.alertService.alert('error', 'Error al cargar dificultades', false)
     });
   }
 
   getTiposPregunta() {
-      this.apiService.get<any[]>('tipospregunta').subscribe({
+    this.apiService.get<any[]>('tipospregunta').subscribe({
       next: data => this.tiposPregunta = data,
-      error: err => this.alertService.alert('error','Error al cargar tipos de pregunta', false)
+      error: err => this.alertService.alert('error', 'Error al cargar tipos de pregunta', false)
     });
   }
 
 
-    getTemas() {
-      this.apiService.get<any[]>('temas').subscribe({
+  getTemas() {
+    this.apiService.get<any[]>('temas').subscribe({
       next: data => this.temas = data,
-      error: err => this.alertService.alert('error','Error al cargar temas', false)
+      error: err => this.alertService.alert('error', 'Error al cargar temas', false)
     });
   }
 

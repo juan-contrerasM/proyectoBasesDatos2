@@ -123,9 +123,13 @@ export class AddQuizComponent implements OnInit {
   }
 
   getAdditionalData() {
+    console.log('Cargando datos adicionales para el profesor:', this.profesorId);
     this.api.get<any[]>('cursos', { profesor: this.profesorId }).subscribe(data => this.cursos = data);
     this.api.get<any[]>('categorias').subscribe(data => this.categorias = data);
     this.api.get<any[]>('temas').subscribe(data => this.temas = data);
+    console.log(this.cursos+'ajoajkjaja');
+
   }
+  
 
 }
