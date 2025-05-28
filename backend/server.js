@@ -363,6 +363,36 @@ app.get('/api/categorias', async (req, res) => {
 
 });
 
+app.get('/api/preguntas/tema/:temaId', async (req, res) => {
+  const temaId = req.params.temaId;
+
+  let connection;
+
+  try {
+    connection = await oracledb.getConnection(dbConfig);
+
+    const result = await connection.execute(
+      `
+      SELECT p.*
+      FROM pregunta p
+      JOIN banco_pregunta_pregunta bp ON bp.pregunta_id = p.id_pregunta
+      WHERE p.tema_id_tema = :temaId
+      `,
+      { temaId: Number(temaId) },
+      { outFormat: oracledb.OUT_FORMAT_OBJECT }
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error al obtener preguntas por tema:', err);
+    res.status(500).json({ error: 'Error al obtener preguntas por tema.' });
+  } finally {
+    if (connection) await connection.close();
+  }
+});
+
+
+
 app.get('/api/cursos', async (req, res) => {
   const profesorId = req.query.profesor;
 

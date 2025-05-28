@@ -42,7 +42,7 @@ getAdditionalData() {
 }
 
 irAPreguntas(temaId: number) {
-  this.router.navigate(['/banco-preguntas', temaId]);
+  this.router.navigate(['banco-preguntas/', temaId]);
 }
 
 obtenerImagenPorNombre(nombre: string): string {

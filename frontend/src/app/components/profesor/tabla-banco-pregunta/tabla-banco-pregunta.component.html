@@ -1,0 +1,33 @@
+<app-nav-bar [tipoUsuario]="'PROFESOR'"></app-nav-bar>
+<div class="container py-4">
+  <h2>📋 Preguntas</h2>
+
+  <table class="table table-bordered mt-3" *ngIf="preguntas.length > 0; else sinPreguntas">
+    <thead class="table-light">
+      <tr>
+        <th>ID</th>
+        <th>Contenido</th>
+        <th>Justificación</th>
+        <th>Tiempo</th>
+        <th>Público</th>
+        <th>Requiere Revisión</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of preguntas">
+        <td>{{ p.ID_PREGUNTA}}</td>
+        <td>{{ p.CONTENIDO }}</td>
+        <td>{{ p.JUSTIFICACION}}</td>
+        <td>{{ p.NUMERO_RESPUESTAS }}</td>
+        <td>{{ p.ESPUBLICA === 1 ? 'Sí' : 'No' }}</td>
+        <td>{{ p.REQUIEREREVISION === 1 ? 'Sí' : 'No' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #sinPreguntas>
+    <div class="alert alert-info mt-4">
+      No hay preguntas registradas para este tema.
+    </div>
+  </ng-template>
+</div>
