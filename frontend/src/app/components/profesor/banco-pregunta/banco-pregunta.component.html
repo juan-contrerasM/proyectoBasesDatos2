@@ -1,13 +1,15 @@
+<app-nav-bar [tipoUsuario]="'PROFESOR'"></app-nav-bar>
+
 <div class="container py-5">
   <h1 class="mb-4 text-center">📚 Banco de Preguntas</h1>
 
   <div class="row">
-    <div *ngFor="let tema of temas" class="col-md-6 col-lg-4 col-xl-3 mb-4">
+    <div *ngFor="let tema of rutas" class="col-md-6 col-lg-4 col-xl-3 mb-4">
       <div class="card shadow-sm h-100">
-        <img [src]="tema.imagen" class="card-img-top" alt="Imagen de {{ tema.nombre }}">
+        <img [src]= tema.ruta class="size card-img-top" alt="Imagen de {{ tema.nombre }}">
         <div class="card-body">
-          <h5 class="card-title">{{ tema.NOMBRE }}</h5>
-          <button class="btn btn-primary btn-sm" (click)="irAPreguntas(tema.ID)">
+          <h5 class="card-title">{{ tema.nombre }}</h5>
+          <button class="btn btn-primary btn-sm" (click)="irAPreguntas(tema.id)">
             Ver preguntas
           </button>
         </div>
