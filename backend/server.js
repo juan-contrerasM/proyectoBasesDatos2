@@ -373,10 +373,35 @@ app.get('/api/preguntas/tema/:temaId', async (req, res) => {
 
     const result = await connection.execute(
       `
-      SELECT p.*
-      FROM pregunta p
-      JOIN banco_pregunta_pregunta bp ON bp.pregunta_id = p.id_pregunta
-      WHERE p.tema_id_tema = :temaId
+   SELECT 
+  p.id_pregunta,
+  p.contenido,
+  p.justificacion,
+  p.numero_respuestas,
+  p.porcentaje,
+  p.requiereRevision,
+  p.tiempo_respuesta,
+  p.espublica,
+  p.estado,
+  p.tema_id_tema,
+  p.tipo_dificultad_id_dificultad,
+  p.tipo_pregunta_id_tipo_pregunta,
+  '[' || LISTAGG(
+    'respuesta:' || r.texto || ',es_correcta:' || 
+    CASE r.es_correcta WHEN 1 THEN 'true' ELSE 'false' END,
+    '; '
+  ) WITHIN GROUP (ORDER BY r.id_respuesta) || ']' AS respuestas_json
+FROM pregunta p
+JOIN banco_pregunta_pregunta bp ON bp.pregunta_id = p.id_pregunta
+LEFT JOIN respuesta r ON r.id_pregunta = p.id_pregunta
+WHERE p.tema_id_tema = :temaId
+GROUP BY 
+  p.id_pregunta, p.contenido, p.justificacion, p.numero_respuestas,
+  p.porcentaje, p.requiereRevision, p.tiempo_respuesta,
+  p.espublica, p.estado, p.tema_id_tema,
+  p.tipo_dificultad_id_dificultad, p.tipo_pregunta_id_tipo_pregunta
+
+
       `,
       { temaId: Number(temaId) },
       { outFormat: oracledb.OUT_FORMAT_OBJECT }
